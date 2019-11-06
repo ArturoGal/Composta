@@ -109,15 +109,35 @@
     <div class="card ">
       <div class="card-header ">
         <h5 class="card-title">Humedad</h5>
-        <p class="card-category">Ultimas 10 lecturas</p>
+        <p class="card-category">Ultimas {{lectura.humComposta.length}} lecturas</p>
       </div>
       <div class="card-body ">
-        <canvas id=chartHours width="400" height="100"></canvas>
+        <canvas id=chartHum width="400" height="100"></canvas>
       </div>
       <div class="card-footer ">
         <hr>
         <div class="stats">
           <i class="fa fa-history"></i> Actualizado: {{parseDate(lastHum.fecha)}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card ">
+      <div class="card-header ">
+        <h5 class="card-title">Temperatura</h5>
+        <p class="card-category">Ultimas {{lectura.tempComposta.length}} lecturas</p>
+      </div>
+      <div class="card-body ">
+        <canvas id=chartTemp width="400" height="100"></canvas>
+      </div>
+      <div class="card-footer ">
+        <hr>
+        <div class="stats">
+          <i class="fa fa-history"></i> Actualizado: {{parseDate(lastTemp.fecha)}}
         </div>
       </div>
     </div>

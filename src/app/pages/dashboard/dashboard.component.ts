@@ -12,9 +12,12 @@ import { Dato } from './Dato'
 export class DashboardComponent implements OnInit {
   public canvas: any;
   public ctx;
+  public ctx2;
+  public canvas2: any;
   public chartColor;
-  public chartEmail;
-  public chartHours;
+  public chartTemp;
+  public chartHum;
+
 
   public lectura: Lectura;
   public json: string;
@@ -31,8 +34,11 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.chartColor = '#FFFFFF';
 
-    this.canvas = document.getElementById('chartHours')
+    this.canvas = document.getElementById('chartHum')
     this.ctx = this.canvas.getContext('2d');
+    this.canvas2 = document.getElementById('chartTemp')
+    this.ctx2 = this.canvas2.getContext('2d');
+
     this.lectura = new Lectura()
     this.lectura.humComposta = []
     this.lectura.tempComposta = []
@@ -43,7 +49,6 @@ export class DashboardComponent implements OnInit {
     this.humValues = new Array()
     this.tempValues = new Array()
     this.getLecturas().subscribe((data) => {
-      // console.log((JSON.stringify(data)))
       this.json = JSON.stringify(data)
       this.jsonObject = JSON.parse(this.json)
 
@@ -64,11 +69,10 @@ export class DashboardComponent implements OnInit {
       this.lastHum = this.lectura.humComposta[this.lectura.humComposta.length - 1]
       this.lastTemp = this.lectura.tempComposta[this.lectura.tempComposta.length - 1]
 
-      this.chartHours = new Chart(this.ctx, {
+      this.chartHum = new Chart(this.ctx, {
         type: 'line',
-  
         data: {
-          labels: this.humLabels.slice(-10),
+          labels: this.humLabels,
           datasets: [
             {
               borderColor: '#6497b1',
@@ -76,7 +80,7 @@ export class DashboardComponent implements OnInit {
               pointRadius: 0,
               pointHoverRadius: 0,
               borderWidth: 3,
-              data: this.humValues.slice(-10)
+              data: this.humValues
             }
           ]
         },
@@ -84,11 +88,9 @@ export class DashboardComponent implements OnInit {
           legend: {
             display: false
           },
-  
           tooltips: {
             enabled: false
           },
-  
           scales: {
             yAxes: [
               {
@@ -105,7 +107,63 @@ export class DashboardComponent implements OnInit {
                 }
               }
             ],
-  
+            xAxes: [
+              {
+                barPercentage: 1.6,
+                gridLines: {
+                  drawBorder: false,
+                  color: 'rgba(255,255,255,0.1)',
+                  zeroLineColor: 'transparent',
+                  display: false
+                },
+                ticks: {
+                  // padding: 20,
+                  fontColor: '#9f9f9f'
+                }
+              }
+            ]
+          }
+        }
+      });
+
+      this.chartTemp = new Chart(this.ctx2, {
+        type: 'line',
+        data: {
+          labels: this.tempLabels,
+          datasets: [
+            {
+              borderColor: '#d68120',
+              backgroundColor: '#d68120',
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              data: this.tempValues
+            }
+          ]
+        },
+        options: {
+          legend: {
+            display: false
+          },
+          tooltips: {
+            enabled: false
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  fontColor: '#9f9f9f',
+                  beginAtZero: false,
+                  // maxTicksLimit: 5
+                  // padding: 20
+                },
+                gridLines: {
+                  drawBorder: false,
+                  zeroLineColor: '#ccc',
+                  color: 'rgba(255,255,255,0.05)'
+                }
+              }
+            ],
             xAxes: [
               {
                 barPercentage: 1.6,
@@ -133,7 +191,7 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  parseDate(str: string): string{
+  parseDate(str: string): string {
     const month = str.slice(5, 7)
     let monthStr = ''
     switch(month) {
