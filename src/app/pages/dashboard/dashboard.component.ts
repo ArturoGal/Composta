@@ -53,8 +53,8 @@ export class DashboardComponent implements OnInit {
       this.jsonObject = JSON.parse(this.json)
 
       this.jsonObject.feeds.forEach(fieldItem => {
-        const newHum = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field1);
-        const newTemp = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field2);
+        const newHum = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field1)
+        const newTemp = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field2)
         if(newHum.valor && newHum.valor != 0) {
           this.lectura.humComposta.push(newHum)
           this.humLabels.push(this.parseDate(newHum.fecha))
@@ -76,11 +76,13 @@ export class DashboardComponent implements OnInit {
           datasets: [
             {
               borderColor: '#6497b1',
-              backgroundColor: '#6497b1',
-              pointRadius: 0,
-              pointHoverRadius: 0,
+              pointBorderColor: '#6497b1',
+              pointRadius: 4,
+              pointHoverRadius: 3,
+              pointBorderWidth: 4,
               borderWidth: 3,
-              data: this.humValues
+              data: this.humValues,
+              fill: false
             }
           ]
         },
@@ -88,22 +90,17 @@ export class DashboardComponent implements OnInit {
           legend: {
             display: false
           },
-          tooltips: {
-            enabled: false
-          },
           scales: {
             yAxes: [
               {
                 ticks: {
                   fontColor: '#9f9f9f',
                   beginAtZero: false,
-                  // maxTicksLimit: 5
-                  // padding: 20
                 },
                 gridLines: {
-                  drawBorder: false,
-                  zeroLineColor: '#ccc',
-                  color: 'rgba(255,255,255,0.05)'
+                  drawBorder: true,
+                  zeroLineColor: '#ebebeb',
+                  color: '#ebebeb'
                 }
               }
             ],
@@ -111,10 +108,10 @@ export class DashboardComponent implements OnInit {
               {
                 barPercentage: 1.6,
                 gridLines: {
-                  drawBorder: false,
-                  color: 'rgba(255,255,255,0.1)',
-                  zeroLineColor: 'transparent',
-                  display: false
+                  drawBorder: true,
+                  color: '#ebebeb',
+                  zeroLineColor: '#ebebeb',
+                  display: true
                 },
                 ticks: {
                   // padding: 20,
@@ -133,11 +130,13 @@ export class DashboardComponent implements OnInit {
           datasets: [
             {
               borderColor: '#d68120',
-              backgroundColor: '#d68120',
-              pointRadius: 0,
-              pointHoverRadius: 0,
+              pointBorderColor: '#d68120',
+              pointRadius: 4,
+              pointHoverRadius: 3,
+              pointBorderWidth: 4,
               borderWidth: 3,
-              data: this.tempValues
+              data: this.tempValues,
+              fill: false
             }
           ]
         },
@@ -145,22 +144,17 @@ export class DashboardComponent implements OnInit {
           legend: {
             display: false
           },
-          tooltips: {
-            enabled: false
-          },
           scales: {
             yAxes: [
               {
                 ticks: {
                   fontColor: '#9f9f9f',
                   beginAtZero: false,
-                  // maxTicksLimit: 5
-                  // padding: 20
                 },
                 gridLines: {
-                  drawBorder: false,
-                  zeroLineColor: '#ccc',
-                  color: 'rgba(255,255,255,0.05)'
+                  drawBorder: true,
+                  zeroLineColor: '#ebebeb',
+                  color: '#ebebeb'
                 }
               }
             ],
@@ -168,13 +162,12 @@ export class DashboardComponent implements OnInit {
               {
                 barPercentage: 1.6,
                 gridLines: {
-                  drawBorder: false,
-                  color: 'rgba(255,255,255,0.1)',
-                  zeroLineColor: 'transparent',
-                  display: false
+                  drawBorder: true,
+                  color: '#ebebeb',
+                  zeroLineColor: '#ebebeb',
+                  display: true
                 },
                 ticks: {
-                  // padding: 20,
                   fontColor: '#9f9f9f'
                 }
               }

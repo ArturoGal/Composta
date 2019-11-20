@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+@import '~firebaseui/dist/firebaseui.css';
 
 @import 'paper-dashboard/variables';
 @import 'paper-dashboard/mixins';
@@ -41,7 +42,6 @@
 @import "paper-dashboard/tables";
 @import "paper-dashboard/sidebar-and-main-panel";
 @import "paper-dashboard/footers";
-@import "paper-dashboard/fixed-plugin";
 
 // cards
 @import "paper-dashboard/cards";
