@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
-import { DashboardService } from './dashboard.service';
 import { HttpClient } from '@angular/common/http';
-import Lectura from './Lectura';
+import { Lectura } from './Lectura';
+import { Dato } from './Dato'
 
 @Component({
   selector: "dashboard-cmp",
@@ -12,209 +12,240 @@ import Lectura from './Lectura';
 export class DashboardComponent implements OnInit {
   public canvas: any;
   public ctx;
+  public ctx2;
+  public canvas2: any;
   public chartColor;
-  public chartEmail;
-  public chartHours;
-  public lecturas: Lectura[];
+  public chartTemp;
+  public chartHum;
+
+
+  public lectura: Lectura;
+  public json: string;
+  public jsonObject: any;
+  public lastTemp: Dato;
+  public lastHum: Dato;
+  public tempLabels: string[]
+  public humLabels: string[]
+  public tempValues: number[]
+  public humValues: number[]
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.chartColor = '#FFFFFF';
 
-    this.canvas = document.getElementById('chartHours')
+    this.canvas = document.getElementById('chartHum')
     this.ctx = this.canvas.getContext('2d');
-    let lecturas = []
+    this.canvas2 = document.getElementById('chartTemp')
+    this.ctx2 = this.canvas2.getContext('2d');
+
+    this.lectura = new Lectura()
+    this.lectura.humComposta = []
+    this.lectura.tempComposta = []
+    this.lastHum = new Dato(0, '', -1)
+    this.lastTemp = new Dato(0, '', -1)
+    this.humLabels = new Array()
+    this.tempLabels = new Array()
+    this.humValues = new Array()
+    this.tempValues = new Array()
     this.getLecturas().subscribe((data) => {
-      console.log(JSON.stringify(data))
-    });
-    console.log(JSON.stringify(this.getLecturas()))
-    this.chartHours = new Chart(this.ctx, {
-      type: 'line',
+      this.json = JSON.stringify(data)
+      this.jsonObject = JSON.parse(this.json)
 
-      data: {
-        labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-          {
-            borderColor: '#6bd098',
-            backgroundColor: '#6bd098',
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            borderWidth: 3,
-            data: [22, 22, 23, 22, 23, 21, 24, 23, 22, 25, 24, 24, 23]
-          }
-        ]
-      },
-      options: {
-        legend: {
-          display: false
-        },
+      this.jsonObject.feeds.forEach(fieldItem => {
+        const newHum = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field1);
+        const newTemp = new Dato(fieldItem.entry_id, fieldItem.created_at, fieldItem.field2);
+        if(newHum.valor && newHum.valor != 0) {
+          this.lectura.humComposta.push(newHum)
+          this.humLabels.push(this.parseDate(newHum.fecha))
+          this.humValues.push(+newHum.valor)
+        }
+        if(newTemp.valor && newTemp.valor != 0) {
+          this.lectura.tempComposta.push(newTemp)
+          this.tempLabels.push(this.parseDate(newTemp.fecha))
+          this.tempValues.push(+newTemp.valor)
+        }
+      });
+      this.lastHum = this.lectura.humComposta[this.lectura.humComposta.length - 1]
+      this.lastTemp = this.lectura.tempComposta[this.lectura.tempComposta.length - 1]
 
-        tooltips: {
-          enabled: false
-        },
-
-        scales: {
-          yAxes: [
+      this.chartHum = new Chart(this.ctx, {
+        type: 'line',
+        data: {
+          labels: this.humLabels,
+          datasets: [
             {
-              ticks: {
-                fontColor: '#9f9f9f',
-                beginAtZero: false,
-                maxTicksLimit: 5
-                // padding: 20
-              },
-              gridLines: {
-                drawBorder: false,
-                zeroLineColor: '#ccc',
-                color: 'rgba(255,255,255,0.05)'
-              }
-            }
-          ],
-
-          xAxes: [
-            {
-              barPercentage: 1.6,
-              gridLines: {
-                drawBorder: false,
-                color: 'rgba(255,255,255,0.1)',
-                zeroLineColor: 'transparent',
-                display: false
-              },
-              ticks: {
-                padding: 20,
-                fontColor: '#9f9f9f'
-              }
+              borderColor: '#6497b1',
+              backgroundColor: '#6497b1',
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              data: this.humValues
             }
           ]
-        }
-      }
-    });
-
-    this.canvas = document.getElementById('chartEmail');
-    this.ctx = this.canvas.getContext('2d');
-    this.chartEmail = new Chart(this.ctx, {
-      type: 'pie',
-      data: {
-        labels: [1, 2, 3],
-        datasets: [
-          {
-            label: 'Emails',
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            backgroundColor: ['#e3e3e3', '#4acccd', '#fcc468', '#ef8157'],
-            borderWidth: 0,
-            data: [342, 480, 530, 120]
+        },
+        options: {
+          legend: {
+            display: false
+          },
+          tooltips: {
+            enabled: false
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  fontColor: '#9f9f9f',
+                  beginAtZero: false,
+                  // maxTicksLimit: 5
+                  // padding: 20
+                },
+                gridLines: {
+                  drawBorder: false,
+                  zeroLineColor: '#ccc',
+                  color: 'rgba(255,255,255,0.05)'
+                }
+              }
+            ],
+            xAxes: [
+              {
+                barPercentage: 1.6,
+                gridLines: {
+                  drawBorder: false,
+                  color: 'rgba(255,255,255,0.1)',
+                  zeroLineColor: 'transparent',
+                  display: false
+                },
+                ticks: {
+                  // padding: 20,
+                  fontColor: '#9f9f9f'
+                }
+              }
+            ]
           }
-        ]
-      },
+        }
+      });
 
-      options: {
-        legend: {
-          display: false
-        },
-
-        pieceLabel: {
-          render: 'percentage',
-          fontColor: ['white'],
-          precision: 2
-        },
-
-        tooltips: {
-          enabled: false
-        },
-
-        scales: {
-          yAxes: [
+      this.chartTemp = new Chart(this.ctx2, {
+        type: 'line',
+        data: {
+          labels: this.tempLabels,
+          datasets: [
             {
-              ticks: {
-                display: false
-              },
-              gridLines: {
-                drawBorder: false,
-                zeroLineColor: 'transparent',
-                color: 'rgba(255,255,255,0.05)'
-              }
-            }
-          ],
-
-          xAxes: [
-            {
-              barPercentage: 1.6,
-              gridLines: {
-                drawBorder: false,
-                color: 'rgba(255,255,255,0.1)',
-                zeroLineColor: 'transparent'
-              },
-              ticks: {
-                display: false
-              }
+              borderColor: '#d68120',
+              backgroundColor: '#d68120',
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              data: this.tempValues
             }
           ]
+        },
+        options: {
+          legend: {
+            display: false
+          },
+          tooltips: {
+            enabled: false
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  fontColor: '#9f9f9f',
+                  beginAtZero: false,
+                  // maxTicksLimit: 5
+                  // padding: 20
+                },
+                gridLines: {
+                  drawBorder: false,
+                  zeroLineColor: '#ccc',
+                  color: 'rgba(255,255,255,0.05)'
+                }
+              }
+            ],
+            xAxes: [
+              {
+                barPercentage: 1.6,
+                gridLines: {
+                  drawBorder: false,
+                  color: 'rgba(255,255,255,0.1)',
+                  zeroLineColor: 'transparent',
+                  display: false
+                },
+                ticks: {
+                  // padding: 20,
+                  fontColor: '#9f9f9f'
+                }
+              }
+            ]
+          }
         }
-      }
-    });
-
-    const speedCanvas = document.getElementById('speedChart');
-
-    const dataFirst = {
-      data: [0, 19, 15, 20, 30, 40, 40, 50, 25, 30, 50, 70],
-      fill: false,
-      borderColor: '#fbc658',
-      backgroundColor: 'transparent',
-      pointBorderColor: '#fbc658',
-      pointRadius: 4,
-      pointHoverRadius: 4,
-      pointBorderWidth: 8
-    };
-
-    const dataSecond = {
-      data: [0, 5, 10, 12, 20, 27, 30, 34, 42, 45, 55, 63],
-      fill: false,
-      borderColor: '#51CACF',
-      backgroundColor: 'transparent',
-      pointBorderColor: '#51CACF',
-      pointRadius: 4,
-      pointHoverRadius: 4,
-      pointBorderWidth: 8
-    };
-
-    const speedData = {
-      labels: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ],
-      datasets: [dataFirst, dataSecond]
-    };
-
-    const chartOptions = {
-      legend: {
-        display: false,
-        position: 'top'
-      }
-    };
-
-    const lineChart = new Chart(speedCanvas, {
-      type: 'line',
-      hover: false,
-      data: speedData,
-      options: chartOptions
+      });
     });
   }
 
   getLecturas() {
     return this.http.get(
-      'https://api.thingspeak.com/channels/879714/fields/2.json?api_key=VJ3NDGMHL5LREM9M3'
+      'https://api.thingspeak.com/channels/879714/feeds.json?api_key=35XGKHW6MQX5BY0'
     );
   }
 
+  parseDate(str: string): string {
+    const month = str.slice(5, 7)
+    let monthStr = ''
+    switch(month) {
+      case '1': {
+        monthStr = 'Ene'
+        break
+      }
+      case '2': {
+        monthStr = 'Feb'
+        break
+      }
+      case '3': {
+        monthStr = 'Mar'
+        break
+      }
+      case '4': {
+        monthStr = 'Abr'
+        break
+      }
+      case '5': {
+        monthStr = 'May'
+        break
+      }
+      case '6': {
+        monthStr = 'Jun'
+        break
+      }
+      case '7': {
+        monthStr = 'Jul'
+        break
+      }
+      case '8': {
+        monthStr = 'Ago'
+        break
+      }
+      case '9': {
+        monthStr = 'Sep'
+        break
+      }
+      case '10': {
+        monthStr = 'Oct'
+        break
+      }
+      case '11': {
+        monthStr = 'Nov'
+        break
+      }
+      case '12': {
+        monthStr = 'Dic'
+        break
+      }
+    }
+    const day = str.slice(8, 10)
+    const hr = str.slice(11, 16)
+    return monthStr + ' ' + day + ', ' + hr
+  }
 }

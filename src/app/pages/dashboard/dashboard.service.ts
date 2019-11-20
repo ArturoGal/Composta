@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import Lectura from './Lectura';
+import { Lectura } from './Lectura';
 
 export class DashboardService {
   lecturas: Lectura[];
@@ -7,7 +7,7 @@ export class DashboardService {
 
   getLecturas() {
     return this.http.get(
-      'https://api.thingspeak.com/channels/879714/fields/2.json?api_key=TRCNRU2WNC0VZSE'
+      'https://api.thingspeak.com/channels/879714/fields/1.json?api_key=35XGKHW6MQX5BY0'
     );
   }
 }

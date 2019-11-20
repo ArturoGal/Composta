@@ -1,9 +1,6 @@
-export default interface Lectura {
-    tempCompost: Dato []
-    mostCompost: Dato []
-}
+import { Dato } from './Dato'
 
-class Dato {
-    fecha: Date
-    valor: number
+export class Lectura {
+    tempComposta: Dato []
+    humComposta: Dato []
 }
