@@ -1,145 +1,205 @@
-<div class="row">
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-umbrella-13 text-info"></i>
+<span>
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-umbrella-13 text-info"></i>
+              </div>
             </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Humedad interna</p>
-              <p class="card-title">{{lastHum.valor}}
-                <p>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-category">Humedad interna</p>
+                <p class="card-title">{{lastHumInt.valor}}
+                  <p>
+              </div>
             </div>
           </div>
         </div>
+        <div class="card-footer ">
+          <hr>
+          <div class="stats">
+            <i class="fa fa-calendar-o"></i> {{parseDate(lastHumInt.fecha)}}
+          </div>
+        </div>
       </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-calendar-o"></i> {{parseDate(lastHum.fecha)}}
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-sun-fog-29 text-danger"></i>
+              </div>
+            </div>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-category">Temperatura interna</p>
+                <p class="card-title">{{lastTempInt.valor}}°
+                  <p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer ">
+          <hr>
+          <div class="stats">
+            <i class="fa fa-calendar-o"></i> {{parseDate(lastTempInt.fecha)}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-umbrella-13 text-info"></i>
+              </div>
+            </div>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-category">Humedad externa</p>
+                <p class="card-title">{{lastHumExt.valor}}
+                  <p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer ">
+          <hr>
+          <div class="stats">
+            <i class="fa fa-calendar-o"></i> {{parseDate(lastHumExt.fecha)}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-sun-fog-29 text-danger"></i>
+              </div>
+            </div>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-category">Temperatura externa</p>
+                <p class="card-title">{{lastTempExt.valor}}°
+                  <p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer ">
+          <hr>
+          <div class="stats">
+            <i class="fa fa-calendar-o"></i> {{parseDate(lastTempExt.fecha)}}
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-sun-fog-29 text-danger"></i>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header ">
+          <h5 class="card-title">Humedad</h5>
+          <div class="row">
+            <p class="card-category" class="col">Mostrando {{totalResultadosHum}} resultados por {{periodoHum}}</p>
+            <div class="col">
+              <div class="row">
+                <p class="card-category" class="col-5 mt-2">Resultados mostrados: </p>
+                <select class="browser-default custom-select col-3" [(ngModel)]="totalResultadosHum"
+                  (change)="onResHumChanged($event)">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Temperatura interna</p>
-              <p class="card-title">{{lastTemp.valor}}°
-                <p>
+            <div class="col">
+              <div class="row">
+                <p class="card-category" class="col-5 mt-2">Mostrando resultados por: </p>
+                <select class="browser-default custom-select col-3" [(ngModel)]="periodoHum"
+                  (change)="onPeriodHumChanged($event)">
+                  <option value="horas">horas</option>
+                  <option value="días">días</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-calendar-o"></i> {{parseDate(lastTemp.fecha)}}
+        <div class="card-body ">
+          <canvas id=chartHum width="400" height="100"></canvas>
+        </div>
+        <div class="card-footer ">
+          <div class="chart-legend">
+            <i class="fa fa-circle ml-4" style="color: #6487b1;"></i> Interior
+            <i class="fa fa-circle ml-4" style="color: #64b7b1;"></i> Exterior
+          </div>
+          <hr>
+          <div class="stats">
+            <i class="fa fa-history"></i> Actualizado: {{parseDate(lastHumInt.fecha)}}
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-umbrella-13 text-info"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Humedad externa</p>
-              <p class="card-title">{{lastHum.valor}}
-                <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-calendar-o"></i> {{parseDate(lastHum.fecha)}}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-3 col-md-6 col-sm-6">
-    <div class="card card-stats">
-      <div class="card-body ">
-        <div class="row">
-          <div class="col-5 col-md-4">
-            <div class="icon-big text-center icon-warning">
-              <i class="nc-icon nc-sun-fog-29 text-danger"></i>
-            </div>
-          </div>
-          <div class="col-7 col-md-8">
-            <div class="numbers">
-              <p class="card-category">Temperatura externa</p>
-              <p class="card-title">{{lastTemp.valor}}°
-                <p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-calendar-o"></i> {{parseDate(lastTemp.fecha)}}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Humedad</h5>
-        <p class="card-category">Ultimas {{lectura.humComposta.length}} lecturas</p>
-      </div>
-      <div class="card-body ">
-        <canvas id=chartHum width="400" height="100"></canvas>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-history"></i> Actualizado: {{parseDate(lastHum.fecha)}}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-md-12">
-    <div class="card ">
-      <div class="card-header ">
-        <h5 class="card-title">Temperatura</h5>
-        <p class="card-category">Ultimas {{lectura.tempComposta.length}} lecturas</p>
-      </div>
-      <div class="card-body ">
-        <canvas id=chartTemp width="400" height="100"></canvas>
-      </div>
-      <div class="card-footer ">
-        <hr>
-        <div class="stats">
-          <i class="fa fa-history"></i> Actualizado: {{parseDate(lastTemp.fecha)}}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header ">
+          <h5 class="card-title">Temperatura</h5>
+          <div class="row">
+            <p class="card-category" class="col">Mostrando {{totalResultadosHum}} resultados por {{periodoHum}}</p>
+            <div class="col">
+              <div class="row">
+                <p class="card-category" class="col-5 mt-2">Resultados mostrados: </p>
+                <select class="browser-default custom-select col-3" [(ngModel)]="totalResultadosTemp"
+                  (change)="onResTempChanged($event)">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+            </div>
+            <div class="col">
+              <div class="row">
+                <p class="card-category" class="col-5 mt-2">Mostrando resultados por: </p>
+                <select class="browser-default custom-select col-3" [(ngModel)]="periodoTemp"
+                  (change)="onPeriodTempChanged($event)">
+                  <option value="horas" selected>horas</option>
+                  <option value="días">días</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="card-body ">
+          <canvas id=chartTemp width="400" height="100"></canvas>
+        </div>
+        <div class="card-footer ">
+            <div class="chart-legend">
+                <i class="fa fa-circle ml-4" style="color: #d67120;"></i> Interior
+                <i class="fa fa-circle ml-4" style="color: #d6af20;"></i> Exterior
+              </div>
+          <hr>
+          <div class="stats">
+            <i class="fa fa-history"></i> Actualizado: {{parseDate(lastTempInt.fecha)}}
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+</span>

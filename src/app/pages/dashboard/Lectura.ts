@@ -1,6 +1,9 @@
 import { Dato } from './Dato'
 
 export class Lectura {
-    tempComposta: Dato []
-    humComposta: Dato []
+    tempCompostaInt: Dato []
+    humCompostaInt: Dato []
+    
+    tempCompostaExt: Dato []
+    humCompostaExt: Dato []
 }
