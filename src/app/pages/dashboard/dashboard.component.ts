@@ -26,15 +26,13 @@ export class DashboardComponent implements OnInit {
 
   public lastTempInt: Dato;
   public lastHumInt: Dato;
-  public tempLabelsInt: string[];
-  public humLabelsInt: string[];
+  public tempLabels: string[];
+  public humLabels: string[];
   public tempValuesInt: number[];
   public humValuesInt: number[];
 
   public lastTempExt: Dato;
   public lastHumExt: Dato;
-  public tempLabelsExt: string[];
-  public humLabelsExt: string[];
   public tempValuesExt: number[];
   public humValuesExt: number[];
 
@@ -51,10 +49,10 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.chartColor = '#FFFFFF';
-    this.firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
-    if (this.afAuth.auth.currentUser) {
-      console.log(this.afAuth.auth.currentUser.email);
-    }
+    // this.firebaseuiAngularLibraryService.firebaseUiInstance.disableAutoSignIn();
+    // if (this.afAuth.auth.currentUser) {
+    //   console.log(this.afAuth.auth.currentUser.email);
+    // }
     this.periodoHum = this.periodoTemp = 'horas';
     this.totalResultadosHum = this.totalResultadosTemp = 20;
 
@@ -70,8 +68,8 @@ export class DashboardComponent implements OnInit {
 
     this.lastHumInt = new Dato(0, '', -1);
     this.lastTempInt = new Dato(0, '', -1);
-    this.humLabelsInt = new Array();
-    this.tempLabelsInt = new Array();
+    this.humLabels = new Array();
+    this.tempLabels = new Array();
     this.humValuesInt = new Array();
     this.tempValuesInt = new Array();
 
@@ -80,12 +78,11 @@ export class DashboardComponent implements OnInit {
 
     this.lastHumExt = new Dato(0, '', -1);
     this.lastTempExt = new Dato(0, '', -1);
-    this.humLabelsExt = new Array();
-    this.tempLabelsExt = new Array();
     this.humValuesExt = new Array();
     this.tempValuesExt = new Array();
 
     this.getLecturas();
+    this.refreshPage();
   }
 
   parseDate(str: string): string {
@@ -144,17 +141,36 @@ export class DashboardComponent implements OnInit {
     const day = str.slice(8, 10);
     const hr = str.slice(11, 16);
     let hrGMT = Number(hr.slice(0, 2));
-    hrGMT = hrGMT > 6 ? hrGMT - 6 : 24 - hrGMT;
+    hrGMT = hrGMT >= 6 ? hrGMT - 6 : 18 + hrGMT;
     // console.log(hrGMT)
-    return monthStr + ' ' + day + ', ' + hr;
+    return monthStr + ' ' + day + ', ' + hrGMT + ':' + hr.slice(3, 5);
   }
 
   getLecturas() {
+    this.lectura = new Lectura();
+
+    this.lectura.humCompostaInt = [];
+    this.lectura.tempCompostaInt = [];
+
+    this.lastHumInt = new Dato(0, '', -1);
+    this.lastTempInt = new Dato(0, '', -1);
+    this.humLabels = new Array();
+    this.tempLabels = new Array();
+    this.humValuesInt = new Array();
+    this.tempValuesInt = new Array();
+
+    this.lectura.humCompostaExt = [];
+    this.lectura.tempCompostaExt = [];
+
+    this.lastHumExt = new Dato(0, '', -1);
+    this.lastTempExt = new Dato(0, '', -1);
+    this.humValuesExt = new Array();
+    this.tempValuesExt = new Array();
+
     this.service.getLecturas().subscribe(data => {
       this.json = JSON.stringify(data);
       this.jsonObject = JSON.parse(this.json);
-      console.log(this.jsonObject.feeds.length);
-      console.log(this.jsonObject.feeds);
+      console.log(this.jsonObject)
       this.jsonObject.feeds.forEach(fieldItem => {
         const newHumInt = new Dato(
           Number(fieldItem.entry_id),
@@ -184,7 +200,7 @@ export class DashboardComponent implements OnInit {
           newHumInt.valor !== NaN
         ) {
           this.lectura.humCompostaInt.push(newHumInt);
-          this.humLabelsInt.push(this.parseDate(newHumInt.fecha));
+          this.humLabels.push(this.parseDate(newHumInt.fecha));
           this.humValuesInt.push(newHumInt.valor);
         }
 
@@ -194,7 +210,7 @@ export class DashboardComponent implements OnInit {
           newTempInt.valor !== NaN
         ) {
           this.lectura.tempCompostaInt.push(newTempInt);
-          this.tempLabelsInt.push(this.parseDate(newTempInt.fecha));
+          this.tempLabels.push(this.parseDate(newTempInt.fecha));
           this.tempValuesInt.push(newTempInt.valor);
         }
 
@@ -204,7 +220,6 @@ export class DashboardComponent implements OnInit {
           newHumExt.valor !== NaN
         ) {
           this.lectura.humCompostaExt.push(newHumExt);
-          this.humLabelsExt.push(this.parseDate(newHumExt.fecha));
           this.humValuesExt.push(newHumExt.valor);
         }
 
@@ -214,10 +229,8 @@ export class DashboardComponent implements OnInit {
           newTempExt.valor !== NaN
         ) {
           this.lectura.tempCompostaExt.push(newTempExt);
-          this.tempLabelsExt.push(this.parseDate(newTempExt.fecha));
           this.tempValuesExt.push(newTempExt.valor);
         }
-
         // if (
         //   newTempExt.valor &&
         //   newTempExt.valor !== 0 &&
@@ -227,10 +240,9 @@ export class DashboardComponent implements OnInit {
         //   newTempInt.valor !== NaN
         // ) {
         //   this.lectura.tempCompostaInt.push(newTempInt);
-        //   this.tempLabelsInt.push(this.parseDate(newTempInt.fecha));
+        //   this.tempLabels.push(this.parseDate(newTempInt.fecha));
         //   this.tempValuesInt.push(newTempInt.valor);
         //   this.lectura.tempCompostaExt.push(newTempExt);
-        //   this.tempLabelsExt.push(this.parseDate(newTempExt.fecha));
         //   this.tempValuesExt.push(newTempExt.valor);
         // }
 
@@ -243,13 +255,20 @@ export class DashboardComponent implements OnInit {
         //   newHumInt.valor !== NaN
         // ) {
         //   this.lectura.humCompostaInt.push(newHumInt);
-        //   this.humLabelsInt.push(this.parseDate(newHumInt.fecha));
+        //   this.humLabels.push(this.parseDate(newHumInt.fecha));
         //   this.humValuesInt.push(newTempInt.valor);
         //   this.lectura.tempCompostaExt.push(newHumExt);
-        //   this.humLabelsExt.push(this.parseDate(newHumExt.fecha));
         //   this.humValuesExt.push(newHumExt.valor);
         // }
       });
+
+      if (this.periodoHum === 'días') {
+        this.filterHumByDay();
+      }
+
+      if (this.periodoTemp === 'días') {
+        this.filterTempByDay();
+      }
 
       this.lastHumInt = this.lectura.humCompostaInt[
         this.lectura.humCompostaInt.length - 1
@@ -274,7 +293,20 @@ export class DashboardComponent implements OnInit {
   }
 
   onPeriodHumChanged($event) {
-    this.filterHumByDay();
+    if (this.periodoHum === 'días') {
+      this.filterHumByDay();
+    } else {
+      this.humLabels = []
+      this.humValuesInt = []
+      this.humValuesExt = []
+      for(const humInt of this.lectura.humCompostaInt){
+        this.humValuesInt.push(humInt.valor)
+        this.humLabels.push(this.parseDate(humInt.fecha))
+      }
+      for(const humExt of this.lectura.humCompostaExt){
+        this.humValuesInt.push(humExt.valor)
+      }
+    }
     this.createHumChart();
   }
 
@@ -283,7 +315,20 @@ export class DashboardComponent implements OnInit {
   }
 
   onPeriodTempChanged($event) {
-    this.filterTempByDay();
+    if (this.periodoTemp === 'días') {
+      this.filterTempByDay();
+    } else {
+      this.tempLabels = []
+      this.tempValuesInt = []
+      this.tempValuesExt = []
+      for(const tempInt of this.lectura.tempCompostaInt){
+        this.tempValuesInt.push(tempInt.valor)
+        this.tempLabels.push(this.parseDate(tempInt.fecha))
+      }
+      for(const tempExt of this.lectura.tempCompostaExt){
+        this.tempValuesInt.push(tempExt.valor)
+      }
+    }
     this.createTempChart();
   }
 
@@ -291,7 +336,7 @@ export class DashboardComponent implements OnInit {
     this.chartHum = new Chart(this.ctx, {
       type: 'line',
       data: {
-        labels: this.humLabelsInt.slice(-this.totalResultadosHum),
+        labels: this.humLabels.slice(-this.totalResultadosHum),
         datasets: [
           {
             borderColor: '#6487b1',
@@ -358,7 +403,7 @@ export class DashboardComponent implements OnInit {
     this.chartTemp = new Chart(this.ctx2, {
       type: 'line',
       data: {
-        labels: this.tempLabelsInt.slice(-this.totalResultadosTemp),
+        labels: this.tempLabels.slice(-this.totalResultadosTemp),
         datasets: [
           {
             borderColor: '#d67120',
@@ -421,60 +466,79 @@ export class DashboardComponent implements OnInit {
 
   filterHumByDay() {
     const dayAvgLabels = [];
-    const dayAvgValues = [];
-    let sum;
-    let counter = (sum = 0);
-    for (let i = 0; i < this.humLabelsInt.length; i++) {
+    const dayAvgIntValues = [];
+    const dayAvgExtValues = [];
+    let sumInt, sumExt;
+    let counter = (sumInt = sumExt = 0);
+    for (let i = 0; i < this.humLabels.length; i++) {
+      let flag = false;
       if (
         i > 0 &&
-        this.humLabelsInt[i].split(' ')[1] !==
-          this.humLabelsInt[i - 1].split(' ')[1]
+        this.humLabels[i].split(' ')[1] !== this.humLabels[i - 1].split(' ')[1]
       ) {
-        // console.log(this.humLabels[i].split(' ')[1]);
-        dayAvgValues.push(sum / counter);
-        dayAvgLabels.push(this.humLabelsInt[i - 1].slice(0, 6));
-        counter = sum = 0;
+        dayAvgIntValues.push(sumInt / counter);
+        dayAvgExtValues.push(sumExt / counter);
+        dayAvgLabels.push(this.humLabels[i - 1].slice(0, 6));
+        counter = sumExt = sumInt = 0;
+        flag = true;
       }
       counter++;
-      sum += this.humValuesInt[i];
-      if (i === this.humLabelsInt.length - 1) {
-        dayAvgValues.push(sum / counter);
-        dayAvgLabels.push(this.humLabelsInt[i].slice(0, 6));
-        counter = sum = 0;
+      sumInt += this.humValuesInt[i];
+      sumExt += this.humValuesExt[i] ? this.humValuesExt[i] : 0;
+      if (i === this.humLabels.length - 1 && !flag) {
+        dayAvgIntValues.push(sumInt / counter);
+        dayAvgExtValues.push(sumExt / counter);
+        dayAvgLabels.push(this.humLabels[i].slice(0, 6));
+        counter = sumExt = sumInt = 0;
       }
     }
     console.log(dayAvgLabels);
-    console.log(dayAvgValues);
-    this.humLabelsInt = dayAvgLabels;
-    this.humValuesInt = dayAvgValues;
+    console.log(dayAvgIntValues);
+    console.log(dayAvgExtValues);
+    this.humLabels = dayAvgLabels;
+    this.humValuesInt = dayAvgIntValues;
+    this.humValuesExt = dayAvgExtValues;
   }
 
   filterTempByDay() {
     const dayAvgLabels = [];
-    const dayAvgValues = [];
-    let sum;
-    let counter = (sum = 0);
-    for (let i = 0; i < this.tempLabelsInt.length; i++) {
+    const dayAvgIntValues = [];
+    const dayAvgExtValues = [];
+    let sumInt, sumExt;
+    let counter = sumInt = sumExt = 0;
+    for (let i = 0; i < this.tempLabels.length; i++) {
       if (
         i > 0 &&
-        this.tempLabelsInt[i].split(' ')[1] !==
-          this.tempLabelsInt[i - 1].split(' ')[1]
+        this.tempLabels[i].split(' ')[1] !==
+          this.tempLabels[i - 1].split(' ')[1]
       ) {
-        dayAvgValues.push(sum / counter);
-        dayAvgLabels.push(this.tempLabelsInt[i - 1].slice(0, 6));
-        counter = sum = 0;
+        dayAvgIntValues.push(sumInt / counter);
+        dayAvgExtValues.push(sumExt / counter);
+        dayAvgLabels.push(this.tempLabels[i - 1].slice(0, 6));
+        counter = sumInt = sumExt = 0;
       }
       counter++;
-      sum += this.tempValuesInt[i];
-      if (i === this.tempLabelsInt.length - 1) {
-        dayAvgValues.push(sum / counter);
-        dayAvgLabels.push(this.tempLabelsInt[i].slice(0, 6));
-        counter = sum = 0;
+      sumInt += this.tempValuesInt[i];
+      sumExt += this.tempValuesExt[i] ? this.tempValuesExt[i] : 0;
+      if (i === this.tempLabels.length - 1) {
+        dayAvgIntValues.push(sumInt / counter);
+        dayAvgExtValues.push(sumExt / counter);
+        dayAvgLabels.push(this.tempLabels[i].slice(0, 6));
+        counter = sumInt = sumExt = 0;
       }
     }
     console.log(dayAvgLabels);
-    console.log(dayAvgValues);
-    this.tempLabelsInt = dayAvgLabels;
-    this.tempValuesInt = dayAvgValues;
+    console.log(dayAvgIntValues);
+    console.log(dayAvgExtValues);
+    this.tempLabels = dayAvgLabels;
+    this.tempValuesInt = dayAvgIntValues;
+    this.tempValuesExt = dayAvgExtValues;
+  }
+
+  refreshPage(){
+    setTimeout(() => {
+      this.getLecturas();
+      this.refreshPage();
+    }, 20000);
   }
 }
