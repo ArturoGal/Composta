@@ -539,6 +539,6 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => {
       this.getLecturas();
       this.refreshPage();
-    }, 20000);
+    }, 350000);
   }
 }

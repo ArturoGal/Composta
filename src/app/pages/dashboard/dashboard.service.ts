@@ -11,7 +11,7 @@ export class DashboardService {
 
   getLecturas() {
     return this.http.get(
-      'https://api.thingspeak.com/channels/879714/feeds.json?api_key=35XGKHW6MQX5BY0&results=8000'
+      'https://api.thingspeak.com/channels/879714/feeds.json?api_key=35XGKHW6MQX5BY0&results=1000'
     );
   }
 }
